@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import { X, Y, LIGHT_SPACESHIP } from './lib/GameOfLife/Data';
-import { step, visibleCells } from './lib/GameOfLife/Game';
+import { X, Y, LIGHT_SPACESHIP } from '../../lib/GameOfLife/Data';
+import { step, visibleCells } from '../../lib/GameOfLife/Game';
 
 const Wrapper = styled.div`
     width: 100%;
