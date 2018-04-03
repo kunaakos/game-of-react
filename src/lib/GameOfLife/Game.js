@@ -54,7 +54,7 @@ export function step(previous) {
 
 function isIn(view) {
     const { startX, startY, endX, endY } = view
-    return (cell) => cell[X] >= startX && cell[X] <= endX && cell[Y] >= startY && cell[Y] <= endY
+    return (cell) => cell[X] >= startX && cell[X] < endX && cell[Y] >= startY && cell[Y] < endY
 }
 
 export function visibleCells(allCells, view) {
