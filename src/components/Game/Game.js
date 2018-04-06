@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import { X, Y, LIGHT_SPACESHIP } from '../../lib/GameOfLife/Data';
-import { step, visibleCells } from '../../lib/GameOfLife/Game';
+import { step, clip } from '../../lib/GameOfLife/Game';
 
 import Board from '../Board/Board'
 
@@ -18,11 +18,10 @@ const GameWrapper = styled.div`
 class Game extends Component {
     state = {
         cells: LIGHT_SPACESHIP,
-        view: {
-            startX: -5,
-            startY: -5,
-            endX: 10,
-            endY: 10
+        viewport: {
+            origin: [-5, -5],
+            width: 20,
+            height: 20
         },
         stepper: undefined
     }
@@ -36,27 +35,25 @@ class Game extends Component {
         }, 1000)
     }
 
-    makeBoardFrom(cells, view) {
-        const width = view.endX - view.startX
-        const height = view.endY - view.startY
-
-        const board = Array.from(new Array(height),
+    makeBoardFrom(cells, viewport) {
+        const board = Array.from(new Array(viewport.height),
             () => {
-                return new Array(width)
+                return new Array(viewport.width)
                     .fill(false)
             }
         )
-
-        visibleCells(cells, view)
+        clip(cells, viewport)
             .forEach(cell => {
-                board[cell[Y] - view.startY][cell[X] - view.startX] = true
+                const row = cell[Y] - viewport.origin[Y]
+                const col = cell[X] - viewport.origin[X]
+                board[row][col] = true
             })
 
         return board
     }
 
     render() {
-        const board = this.makeBoardFrom(this.state.cells, this.state.view)
+        const board = this.makeBoardFrom(this.state.cells, this.state.viewport)
         return (
             <GameWrapper className="game-wrapper">
                 <Board board={board}/>

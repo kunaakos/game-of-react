@@ -25,12 +25,10 @@ function countLiveCells(cells, liveCells) {
 }
 
 function cellStepper(liveCells) {
-    // returns true is cell will be alive in the next generation, false if not
     return (cell) => {
         let liveNeighborCount = countLiveCells(neighborsOf(cell), liveCells)
-
         return isAmong(liveCells, cell)
-            ? liveNeighborCount >=2 && liveNeighborCount <= 3
+            ? liveNeighborCount >= 2 && liveNeighborCount <= 3
                 ? true
                 : false
             : liveNeighborCount === 3
@@ -40,25 +38,30 @@ function cellStepper(liveCells) {
 }
 
 export function step(previous) {
-
     let willLive = cellStepper(previous)
-
     return _(previous)
         .map(neighborsOf)
         .flatten()
         .uniqBy(JSON.stringify)
         .filter(willLive)
         .value()
-
 }
 
-function isIn(view) {
-    const { startX, startY, endX, endY } = view
-    return (cell) => cell[X] >= startX && cell[X] < endX && cell[Y] >= startY && cell[Y] < endY
+function isIn(viewport) {
+    const { origin, width, height } = viewport
+    const end = [
+        origin[X] + width,
+        origin[Y] + height
+    ]
+    return (cell) =>
+        cell[X] >= origin[X] &&
+        cell[X] < end[X] &&
+        cell[Y] >= origin[Y] &&
+        cell[Y] < end[Y]
 }
 
-export function visibleCells(allCells, view) {
-    const isVisible = isIn(view)
-    return allCells
+export function clip(cells, viewport) {
+    const isVisible = isIn(viewport)
+    return cells
         .filter(isVisible)
 }
