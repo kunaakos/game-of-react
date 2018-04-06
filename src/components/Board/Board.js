@@ -1,60 +1,51 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-const BoardWrapper = styled.div`
-    border: 1px solid #000;
-    display: flex;
-    flex-flow: column nowrap;
-    width: 100%;
-`
+import './Board.css'
 
-const Row = styled.div`
-    margin: 0;
-    width: 100%;    
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: center;
-`
+import { X, Y } from '../../lib/GameOfLife/Data';
+import Cell from './Cell'
 
-const Cell = styled.div`
-    display: flex;
-    flex-flow: row nowrap;
-    flex-grow: 1;
-    &:before {
-        content:'';
-        float:left;
-        padding-top:100%;
-    }
-    margin: 0;
-    background: ${props => props.alive ? '#000' : 'transparent'};
-`
+function makeBoard(liveCells, viewport) {
+    const board = Array.from(new Array(viewport.height),
+        () => {
+            return new Array(viewport.width)
+                .fill(false)
+        }
+    )
+    liveCells.forEach(cell => {
+        const row = cell[Y] - viewport.origin[Y]
+        const col = cell[X] - viewport.origin[X]
+        board[row][col] = true
+    })
+    return board
+}
 
 class Board extends Component {
 
-    renderCell(isAlive, key) {
-        return (
-            <Cell key={key} alive={isAlive} />
-        )
+    state = {
+        board: undefined
     }
 
-    renderRow(row, key) {
-        const renderCell = this.renderCell.bind(this)
-        return (
-            <Row key={key}>
-                {row.map(renderCell)}
-            </Row>
-        )
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return {
+            board: makeBoard(nextProps.liveCells, nextProps.viewport)
+        }
     }
 
     render() {
-        const board = this.props.board
-        const renderRow = this.renderRow.bind(this)
         return (
-            <BoardWrapper className="board-wrapper">
-                {board.map(renderRow)}
-            </BoardWrapper>
+            <div className="board">
+                {this.state.board.map((row, index) => (
+                    <div className='row'>
+                        {row.map((cell) => (
+                            <Cell alive={cell} />
+                        ))}
+                    </div>
+                ))}
+            </div>
         );
     }
+
 }
 
 export default Board

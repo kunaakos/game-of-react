@@ -35,28 +35,13 @@ class Game extends Component {
         }, 1000)
     }
 
-    makeBoardFrom(cells, viewport) {
-        const board = Array.from(new Array(viewport.height),
-            () => {
-                return new Array(viewport.width)
-                    .fill(false)
-            }
-        )
-        clip(cells, viewport)
-            .forEach(cell => {
-                const row = cell[Y] - viewport.origin[Y]
-                const col = cell[X] - viewport.origin[X]
-                board[row][col] = true
-            })
-
-        return board
-    }
-
     render() {
-        const board = this.makeBoardFrom(this.state.cells, this.state.viewport)
         return (
             <GameWrapper className="game-wrapper">
-                <Board board={board}/>
+                <Board 
+                    liveCells={clip(this.state.cells, this.state.viewport)}
+                    viewport={this.state.viewport}
+                />
             </GameWrapper>
         );
     }
